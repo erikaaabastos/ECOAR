@@ -141,6 +141,7 @@ void loop() {
       "Content-Type",
       "application/json"
     );
+    http.addHeader("X-API-Key", API_KEY);
 
     String dados = "{";
 
