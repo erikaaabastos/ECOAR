@@ -1,23 +1,23 @@
 #include <Wire.h>
 #include <WiFi.h>
-#include "secrets.h"
+#include <WiFiClientSecure.h>
 #include <HTTPClient.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME680.h>
+#include "secrets.h"
 
 Adafruit_BME680 bme;
 
 const char* ssid = WIFI_SSID;
 const char* senha = WIFI_PASSWORD;
 
-// Endereço da API no seu computador
 const char* enderecoAPI =
-  "http://192.168.15.9:3000/api/medicoes";
+  "https://ecoar-painel-ambiental.onrender.com/api/medicoes";
 
 void conectarWifi() {
   Serial.print("Conectando ao Wi-Fi");
 
-  WiFi.begin(nomeWifi, senhaWifi);
+  WiFi.begin(ssid, senha);
 
   int tentativas = 0;
 
@@ -133,15 +133,22 @@ void loop() {
   Serial.println(" kOhm");
 
   if (WiFi.status() == WL_CONNECTED) {
+    WiFiClientSecure clienteSeguro;
+    clienteSeguro.setInsecure();
+
     HTTPClient http;
 
-    http.begin(enderecoAPI);
+    http.begin(clienteSeguro, enderecoAPI);
 
     http.addHeader(
       "Content-Type",
       "application/json"
     );
-    http.addHeader("X-API-Key", API_KEY);
+
+    http.addHeader(
+      "X-API-Key",
+      API_KEY
+    );
 
     String dados = "{";
 
