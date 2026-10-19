@@ -1,0 +1,203 @@
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#123e35">
+   <meta name="description" content="ECOAR — painel de monitoramento das condições ambientais internas.">
+    <title>ECOAR · Monitoramento ambiental</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23123e35'/%3E%3Cpath d='M8 10h16M8 16h12M8 22h16' stroke='%23bef264' stroke-width='3'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/app.js" defer></script>
+</head>
+<body>
+    <a class="skip" href="#main">Pular para o conteúdo</a>
+    <aside class="sidebar">
+        <a class="brand" href="#painel" aria-label="ECOAR, painel">
+            <span class="brand-icon" aria-hidden="true">≋</span>ECOAR
+        </a>
+        <p class="brand-sub">MONITORAMENTO AMBIENTAL</p>
+        <nav aria-label="Navegação principal">
+            <a href="#painel" aria-current="page">
+                <span aria-hidden="true">▦</span> Painel
+            </a>
+            <a href="#graficos">
+                <span aria-hidden="true">↗</span> Gráficos
+            </a>
+            <a href="#historico">
+                <span aria-hidden="true">≡</span> Histórico
+            </a>
+            <a href="#sobre">
+                <span aria-hidden="true">ⓘ</span> Sobre o ECOAR
+            </a>
+        </nav>
+        <div class="device">
+            <span class="eyebrow">ESTAÇÃO ECOAR</span>
+            <strong>ESP32 + BME680</strong>
+            <p>Monitoramento em tempo real</p>
+            <span class="badge normal">Sistema ativo</span>
+        </div>
+        <p class="sidebar-foot">Observe. Entenda. Cuide.</p>
+    </aside>
+    <div class="workspace">
+        <header class="topbar">
+            <span>Estação 01 <span class="muted">/ Ambiente interno</span></span>
+            <span class="badge demo">Dados do sensor</span>
+        </header>
+        <main id="main" tabindex="-1">
+            <section id="painel" aria-labelledby="page-title">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">VISÃO GERAL</p>
+                        <h1 id="page-title">Seu ambiente, em perspectiva.</h1>
+                        <p class="muted">Acompanhe as condições do ambiente em um só lugar.</p>
+                    </div>
+                    <button id="refresh" class="primary">↻ Atualizar leitura</button>
+                </div>
+                <div class="reading-meta">
+                    <span>Última leitura: <time id="last-reading"></time></span>
+                    <button id="pause" aria-pressed="false">Pausar atualização</button>
+                    <span id="connection">API conectada · atualização a cada 10 s</span>
+                </div>
+                <div class="overview">
+                    <article class="environment">
+                        <div>
+                            <span class="eyebrow">CLASSIFICAÇÃO AMBIENTAL</span>
+                            <h2 id="environment-title">Normal</h2>
+                            <p id="environment-description"></p>
+                            <p class="small">Critérios demonstrativos do projeto.</p>
+                        </div>
+                        <div class="iaq-orbit">
+                            <span id="hero-iaq">—</span>
+                            <span>IAQ estimado</span>
+                        </div>
+                    </article>
+                    <div class="overview-note">
+                        <span class="eyebrow">O QUE ESTAMOS MEDINDO?</span>
+                        <h2>Pequenas leituras.<br>Uma visão mais clara.</h2>
+                        <p>Temperatura, umidade e resposta do sensor de gases ajudam a observar mudanças no ambiente.</p>
+                        <a href="#sobre">Entenda os indicadores <span aria-hidden="true">↗</span></a>
+                    </div>
+                </div>
+                <div class="metrics" id="metrics"></div>
+                <section class="alerts" aria-labelledby="alerts-title">
+                    <h2 id="alerts-title">Alertas atuais</h2>
+                    <div id="alerts"></div>
+                </section>
+            </section>
+            <section class="panel" id="graficos" aria-labelledby="chart-title">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">AO LONGO DO TEMPO</p>
+                        <h2 id="chart-title">Evolução ambiental</h2>
+                    </div>
+                    <label>Indicador
+                        <select id="metric">
+                            <option value="temperature">Temperatura</option>
+                            <option value="humidity">Umidade</option>
+                            <option value="gas">Resistência de gases</option>
+                            <option value="iaq">IAQ estimado</option>
+                        </select>
+                    </label>
+                </div>
+                <form id="filters" class="filters">
+                    <label>Período
+                        <select id="period">
+                            <option value="today">Hoje</option>
+                            <option value="7">Últimos 7 dias</option>
+                            <option value="30">Últimos 30 dias</option>
+                            <option value="custom">Personalizado</option>
+                        </select>
+                    </label>
+                    <label>Classificação
+                        <select id="classification">
+                            <option value="all">Todas</option>
+                            <option value="normal">Normal</option>
+                            <option value="attention">Atenção</option>
+                            <option value="discomfort">Desconfortável</option>
+                            <option value="critical">Crítico</option>
+                        </select>
+                    </label>
+                    <div id="custom-dates" hidden>
+                        <label>De
+                            <input id="start" type="date">
+                        </label>
+                        <label>Até
+                            <input id="end" type="date">
+                        </label>
+                    </div>
+                    <button type="reset">Limpar filtros</button>
+                </form>
+                <p id="filter-error" class="error" role="alert"></p>
+                <p class="small muted">Os filtros são aplicados ao gráfico e ao histórico. Horários no fuso do seu navegador.</p>
+                <div id="chart" class="chart"></div>
+                <p id="chart-summary"></p>
+                <a href="#historico" class="small">Consultar os valores na tabela ↓</a>
+            </section>
+            <section class="panel" id="historico" aria-labelledby="history-title">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">REGISTRO DE LEITURAS</p>
+                        <h2 id="history-title">Histórico</h2>
+                    </div>
+                    <span id="count" class="muted"></span>
+                </div>
+                <div class="table-wrap" tabindex="0" role="region" aria-label="Histórico ambiental, role horizontalmente em telas pequenas">
+                    <table>
+                        <caption class="sr-only">Leituras ambientais correspondentes aos filtros, da mais recente à mais antiga</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Data e horário</th>
+                                <th scope="col">Temperatura</th>
+                                <th scope="col">Umidade</th>
+                                <th scope="col">Gases</th>
+                                <th scope="col">IAQ estimado</th>
+                                <th scope="col">Classificação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rows"></tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <span id="page-info"></span>
+                    <div>
+                        <button id="prev" aria-label="Página anterior">← Anterior</button>
+                        <button id="next" aria-label="Próxima página">Próxima →</button>
+                    </div>
+                </div>
+            </section>
+            <section class="panel about" id="sobre" aria-labelledby="about-title">
+                <div>
+                    <p class="eyebrow">SOBRE O PROJETO</p>
+                    <h2 id="about-title">Tecnologia para observar o ambiente.</h2>
+                    <p>O ECOAR reúne em uma interface acessível as medições coletadas pelo ESP32 e pelo sensor BME680, permitindo acompanhar as condições ambientais atuais e consultar o histórico de leituras.</p>
+                </div>
+                <div>
+                    <details>
+                        <summary>Como interpretar os indicadores?</summary>
+                        <p>Temperatura em °C, umidade relativa em % e resistência elétrica do sensor de gases em kΩ. A resistência não representa concentração de um gás específico.</p>
+                    </details>
+                    <details>
+                        <summary>Como funciona o IAQ estimado?</summary>
+                        <p>Índice demonstrativo de 0 a 500, calculado pela simulação a partir da umidade e da resistência de gases. Quanto menor, melhor a classificação ilustrativa. Não é o IAQ calibrado do Bosch BSEC e não mede CO₂.</p>
+                    </details>
+                    <details>
+                        <summary>Quais critérios geram alertas?</summary>
+                        <p>Normal: temperatura entre 18 e 30 °C, umidade entre 30 e 70% e IAQ até 100. Atenção: fora dessas faixas. Crítico: temperatura abaixo de 10 ou acima de 35 °C, umidade abaixo de 20 ou acima de 80%, ou IAQ acima de 200. Estes limites são exemplos do projeto, não padrões de saúde.</p>
+                    </details>
+                    <details>
+                        <summary>Acessibilidade e controles</summary>
+                        <p>Use Tab e Shift + Tab para navegar, Enter para acionar botões e as setas para selecionar opções. O gráfico possui resumo textual e tabela equivalente. A simulação pode ser pausada. A interface respeita a preferência por redução de movimento.</p>
+                    </details>
+                </div>
+            </section>
+            <footer>
+                ECOAR <span>Monitoramento ambiental · Protótipo demonstrativo</span>
+            </footer>
+            <p id="announcer" class="sr-only" role="status" aria-live="polite"></p>
+            <noscript>Ative o JavaScript para visualizar as medições, os gráficos e o histórico.</noscript>
+        </main>
+    </div>
+</body>
+</html>
