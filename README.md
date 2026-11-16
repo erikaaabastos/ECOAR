@@ -62,6 +62,21 @@ O protótipo é composto pelo sensor ambiental BME680, pelo microcontrolador ESP
 - Apresentação de alertas para classificações mais críticas;
 - Interface adaptável para computador e celular.
 
+## 🏢 Possíveis aplicações
+
+O ECOAR pode ser utilizado para o acompanhamento das condições ambientais em diferentes espaços internos, como:
+
+- Residências;
+- Salas de aula;
+- Escritórios;
+- Laboratórios;
+- Academias;
+- Bibliotecas;
+- Ambientes comerciais;
+- Locais com permanência prolongada de pessoas.
+
+O sistema auxilia na identificação de alterações de temperatura, umidade e resposta do sensor de gases, permitindo acompanhar as condições do ambiente ao longo do tempo.
+
 ## 🏗️ Arquitetura do sistema
 
 O fluxo de funcionamento do ECOAR ocorre da seguinte forma:
